@@ -1,0 +1,75 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <link rel="stylesheet" href="../css/factor01.css">
+    <title>FACTOR 01</title>
+</head>
+<body>
+    <!-- Top Header -->
+    <div class="top-header">
+        <div class="logo">color</div>
+        <div class="divider"></div>
+        <div class="company-name">FACTOR 01</div>
+    </div>
+
+    <!-- Navigation Bar -->
+    <nav class="nav-bar">
+        <div class="nav-item active">OVERVIEW</div>
+        <div class="nav-item">FACTOR 01</div>
+        <div class="nav-item">PERFORMANCE</div>
+        <div class="nav-item">CASH FLOW</div>
+    </nav>
+
+    <!-- Main Content -->
+    <div class="container">
+        <div class="grid">
+            <!-- Total NAV Card -->
+            <div class="card">
+                <div class="card-label">TOTAL NAV CASH</div>
+                <div class="card-value">$101.9M</div>
+                <div class="card-subtitle">64 holdings</div>
+            </div>
+
+            <!-- 12M Cashflow Forecast Card -->
+            <div class="card">
+                <div class="card-label">12M CASHFLOW FORECAST</div>
+                <div class="card-value">$1.9M</div>
+                <div class="card-subtitle">24 holdings</div>
+            </div>
+
+            <!-- Average Interest Rate Card -->
+            <div class="card">
+                <div class="card-label">AVG. INTEREST RATE</div>
+                <div class="card-value positive">+14.2%</div>
+                <div class="card-comparison">↑ 2.4% vs benchmark</div>
+            </div>
+        </div>
+    </div>
+
+    <script>
+        // Navigation functionality
+        document.addEventListener('DOMContentLoaded', function() {
+            const navItems = document.querySelectorAll('.nav-item');
+            
+            navItems.forEach(item => {
+                item.addEventListener('click', function() {
+                    // Remove active class from all items
+                    navItems.forEach(nav => nav.classList.remove('active'));
+                    // Add active class to clicked item
+                    this.classList.add('active');
+                    
+                    console.log('Navigating to:', this.textContent);
+                });
+            });
+
+            // Example function to update card data
+            function updateDashboard(data) {
+                // Update card values dynamically
+                // This is where you'd integrate with your Supabase API
+            }
+        });
+    </script>
+</body>
+</html>

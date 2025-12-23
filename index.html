@@ -1,0 +1,51 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <title>Portfolio Positions</title>
+
+  <style>
+    body {
+      font-family: Arial, sans-serif;
+      padding: 20px;      
+    }
+    table {
+      width: 100%;
+      border-collapse: collapse;
+      margin-top: 16px;
+    }
+    th, td {
+      border: 1px solid #ddd;
+      padding: 8px;
+    }
+    th {
+      background: #f4f6f8;
+      text-align: left;
+    }
+  </style>
+</head>
+<body>
+
+  <h1>📊 Portfolio Positions</h1>
+  <button id="loadBtn">Load Positions</button>
+
+  <table id="positionsTable">
+    <thead>
+      <tr>
+        <th>Holder ID</th>
+        <th>Client</th>
+        <th>Ticker</th>
+        <th>Security</th>
+        <th>Notional</th>
+        <th>CCY</th>
+        <th>Latest Price</th>
+        <th>Market Value</th>
+      </tr>
+    </thead>
+    <tbody></tbody>
+  </table>
+
+  <!-- Load JS as module -->
+  <script type="module" src="js/database.js"></script>
+</body>
+</html>
