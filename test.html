@@ -1,0 +1,805 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>FACTOR 01</title>
+    <script src="https://cdn.jsdelivr.net/npm/chart.js@4.4.0/dist/chart.umd.min.js"></script>
+    <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
+    <style>
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+
+        body {
+            font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', 'Helvetica', Arial, sans-serif;
+            background: #000000;
+            color: #ffffff;
+            min-height: 100vh;
+        }
+
+        /* Top Header Bar */
+        .top-header {
+            background: linear-gradient(90deg, #1a3d4d 0%, #0d2330 100%);
+            padding: 15px 40px;
+            display: flex;
+            align-items: center;
+            gap: 20px;
+            border-bottom: 1px solid rgba(255, 255, 255, 0.1);
+        }
+
+        .logo {
+            font-size: 16px;
+            font-weight: 400;
+            color: #ffffff;
+            letter-spacing: 1px;
+        }
+
+        .divider {
+            width: 1px;
+            height: 30px;
+            background: rgba(255, 255, 255, 0.3);
+        }
+
+        .company-name {
+            font-size: 18px;
+            font-weight: 400;
+            color: #8bb4c9;
+            letter-spacing: 2px;
+        }
+
+        /* Navigation Bar */
+        .nav-bar {
+            background: #000000;
+            display: flex;
+            padding: 0 40px;
+            border-bottom: 1px solid rgba(255, 255, 255, 0.1);
+        }
+
+        .nav-item {
+            padding: 20px 30px;
+            font-size: 14px;
+            font-weight: 400;
+            color: #8892b0;
+            cursor: pointer;
+            transition: all 0.3s ease;
+            border-bottom: 3px solid transparent;
+            letter-spacing: 1px;
+        }
+
+        .nav-item:hover {
+            color: #ffffff;
+            background: rgba(255, 255, 255, 0.02);
+        }
+
+        .nav-item.active {
+            color: #ffffff;
+            border-bottom-color: #5a9fb8;
+        }
+
+        /* Main Content */
+        .container {
+            padding: 40px;
+            max-width: 1600px;
+            margin: 0 auto;
+        }
+
+        .grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(280px, 1fr));
+            gap: 20px;
+            max-width: 1200px;
+            margin: 0;
+        }
+
+        /* Card Styles */
+        .card {
+            background: linear-gradient(135deg, #1a3d4d 0%, #0d2330 100%);
+            border-radius: 8px;
+            padding: 30px;
+            position: relative;
+            overflow: hidden;
+            transition: all 0.3s ease;
+            border: 1px solid rgba(90, 159, 184, 0.2);
+        }
+
+        .card:hover {
+            transform: translateY(-3px);
+            border-color: rgba(90, 159, 184, 0.4);
+            box-shadow: 0 10px 30px rgba(90, 159, 184, 0.15);
+        }
+
+        .card.wide {
+            grid-column: span 2;
+        }
+
+        .card-label {
+            font-size: 11px;
+            text-transform: uppercase;
+            letter-spacing: 1.5px;
+            color: #7a9fb0;
+            margin-bottom: 15px;
+            font-weight: 500;
+        }
+
+        .card-value {
+            font-size: 42px;
+            font-weight: 600;
+            color: #ffffff;
+            line-height: 1;
+            margin-bottom: 12px;
+        }
+
+        .card-value.positive {
+            color: #6bc9a8;
+        }
+
+        .card-subtitle {
+            font-size: 13px;
+            color: #7a9fb0;
+            font-weight: 400;
+        }
+
+        .card-comparison {
+            font-size: 13px;
+            color: #6bc9a8;
+            margin-top: 8px;
+            font-weight: 400;
+        }
+
+        .loading {
+            text-align: center;
+            color: #7a9fb0;
+            padding: 20px;
+        }
+
+        /* Holdings Table */
+        .holdings-table {
+            width: 100%;
+            border-collapse: collapse;
+            margin-top: 15px;
+            max-height: 300px;
+            overflow-y: auto;
+            display: block;
+        }
+
+        .holdings-table thead {
+            position: sticky;
+            top: 0;
+            background: #0d2330;
+        }
+
+        .holdings-table th {
+            text-align: left;
+            padding: 12px;
+            font-size: 11px;
+            text-transform: uppercase;
+            letter-spacing: 1px;
+            color: #7a9fb0;
+            font-weight: 500;
+            border-bottom: 1px solid rgba(255, 255, 255, 0.1);
+            cursor: pointer;
+            user-select: none;
+            position: relative;
+        }
+
+        .holdings-table th:hover {
+            color: #6bc9a8;
+        }
+
+        .holdings-table th.sortable::after {
+            content: '⇅';
+            position: absolute;
+            right: 5px;
+            opacity: 0.3;
+        }
+
+        .holdings-table th.sorted-asc::after {
+            content: '↑';
+            opacity: 1;
+            color: #6bc9a8;
+        }
+
+        .holdings-table th.sorted-desc::after {
+            content: '↓';
+            opacity: 1;
+            color: #6bc9a8;
+        }
+
+        .holdings-table td {
+            padding: 12px;
+            font-size: 13px;
+            color: #ffffff;
+            border-bottom: 1px solid rgba(255, 255, 255, 0.05);
+        }
+
+        .holdings-table tbody {
+            display: block;
+            max-height: 250px;
+            overflow-y: auto;
+        }
+
+        .holdings-table thead, .holdings-table tbody tr {
+            display: table;
+            width: 100%;
+            table-layout: fixed;
+        }
+
+        @media (max-width: 768px) {
+            .top-header {
+                padding: 15px 20px;
+            }
+
+            .nav-bar {
+                padding: 0 20px;
+                overflow-x: auto;
+            }
+
+            .nav-item {
+                padding: 15px 20px;
+                font-size: 13px;
+            }
+
+            .container {
+                padding: 20px;
+            }
+
+            .grid {
+                grid-template-columns: 1fr;
+            }
+
+            .card.wide {
+                grid-column: span 1;
+            }
+
+            .card-value {
+                font-size: 36px;
+            }
+        }
+    </style>
+</head>
+<body>
+    <!-- Top Header -->
+    <div class="top-header">
+        <div class="logo">color</div>
+        <div class="divider"></div>
+        <div class="company-name">FACTOR 01</div>
+    </div>
+
+    <!-- Navigation Bar -->
+    <nav class="nav-bar">
+        <div class="nav-item active">OVERVIEW</div>
+        <div class="nav-item">FACTOR 01</div>
+        <div class="nav-item">PERFORMANCE</div>
+        <div class="nav-item">CASH FLOW</div>
+    </nav>
+
+    <!-- Main Content -->
+    <div class="container">
+        <!-- Main Metrics Grid -->
+        <div class="grid">
+            <!-- Total NAV Card -->
+            <div class="card">
+                <div class="card-label">TOTAL NAV CASH</div>
+                <div class="card-value" id="totalNav">$101.9M</div>
+                <div class="card-subtitle" id="totalHoldings">64 holdings</div>
+            </div>
+
+            <!-- 12M Cashflow Forecast Card -->
+            <div class="card">
+                <div class="card-label">12M CASHFLOW FORECAST</div>
+                <div class="card-value" id="cashflowForecast">$1.9M</div>
+                <div class="card-subtitle" id="cashHoldings">24 holdings</div>
+            </div>
+
+            <!-- Average Interest Rate Card -->
+            <div class="card">
+                <div class="card-label">AVG. INTEREST RATE</div>
+                <div class="card-value positive" id="avgRate">+14.2%</div>
+                <div class="card-comparison" id="benchmark">↑ 2.4% vs benchmark</div>
+            </div>
+
+            <!-- Performance Chart Card -->
+            <div class="card wide">
+                <div class="card-label">12-MONTH PERFORMANCE TREND</div>
+                <canvas id="performanceChart" style="max-height: 250px;"></canvas>
+            </div>
+
+            <!-- Asset Allocation Bar Chart -->
+            <div class="card">
+                <div class="card-label">ASSET ALLOCATION</div>
+                <canvas id="allocationChart" style="max-height: 250px;"></canvas>
+            </div>
+
+            <!-- Maturity Exposure Column Chart -->
+            <div class="card">
+                <div class="card-label">MATURITY EXPOSURE</div>
+                <canvas id="maturityChart" style="max-height: 250px;"></canvas>
+            </div>
+
+            <!-- Credit Rating vs Interest Scatter Plot -->
+            <div class="card wide">
+                <div class="card-label">CREDIT RATING vs INTEREST RATE</div>
+                <canvas id="creditScatterChart" style="max-height: 300px;"></canvas>
+            </div>
+
+            <!-- Holdings Table Card -->
+            <div class="card wide">
+                <div class="card-label">TOP HOLDINGS</div>
+                <div class="holdings-table-container">
+                    <table class="holdings-table">
+                        <thead>
+                            <tr>
+                                <th class="sortable" data-column="security">Security</th>
+                                <th class="sortable" data-column="quantity">Quantity</th>
+                                <th class="sortable" data-column="price">Price</th>
+                                <th class="sortable" data-column="value">Value</th>
+                                <th class="sortable" data-column="return">Return</th>
+                            </tr>
+                        </thead>
+                        <tbody id="holdingsTableBody">
+                            <tr>
+                                <td colspan="5" class="loading">Loading holdings...</td>
+                            </tr>
+                        </tbody>
+                    </table>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <script>
+        // ===== SUPABASE CONFIGURATION =====
+        // Replace with your actual Supabase credentials
+        const SUPABASE_URL = 'YOUR_SUPABASE_URL';
+        const SUPABASE_KEY = 'YOUR_SUPABASE_ANON_KEY';
+        
+        // Initialize Supabase client
+        // Uncomment the line below and add your credentials
+        // const supabase = window.supabase.createClient(SUPABASE_URL, SUPABASE_KEY);
+
+        // ===== SAMPLE DATA (Remove when using real Supabase data) =====
+        const sampleHoldings = [
+            { security: 'AAPL', quantity: 1000, current_price: 180.50, cost_basis: 150.00, interest_rate: 12.5, credit_rating: 8.5, maturity_years: 2 },
+            { security: 'MSFT', quantity: 800, current_price: 380.25, cost_basis: 320.00, interest_rate: 15.2, credit_rating: 9.0, maturity_years: 5 },
+            { security: 'GOOGL', quantity: 500, current_price: 140.80, cost_basis: 120.00, interest_rate: 14.8, credit_rating: 8.8, maturity_years: 3 },
+            { security: 'AMZN', quantity: 600, current_price: 165.30, cost_basis: 140.00, interest_rate: 13.9, credit_rating: 8.2, maturity_years: 7 },
+            { security: 'TSLA', quantity: 400, current_price: 245.60, cost_basis: 200.00, interest_rate: 16.1, credit_rating: 7.5, maturity_years: 4 },
+            { security: 'META', quantity: 700, current_price: 425.90, cost_basis: 350.00, interest_rate: 14.3, credit_rating: 8.6, maturity_years: 1 },
+            { security: 'NVDA', quantity: 300, current_price: 495.20, cost_basis: 400.00, interest_rate: 15.7, credit_rating: 8.9, maturity_years: 10 },
+            { security: 'JPM', quantity: 900, current_price: 155.40, cost_basis: 130.00, interest_rate: 11.8, credit_rating: 9.2, maturity_years: 6 },
+            { security: 'BAC', quantity: 1200, current_price: 32.70, cost_basis: 28.00, interest_rate: 10.5, credit_rating: 8.7, maturity_years: 8 },
+            { security: 'WFC', quantity: 850, current_price: 48.90, cost_basis: 42.00, interest_rate: 11.2, credit_rating: 8.4, maturity_years: 3 }
+        ];
+
+        // ===== NAVIGATION FUNCTIONALITY =====
+        document.addEventListener('DOMContentLoaded', function() {
+            const navItems = document.querySelectorAll('.nav-item');
+            
+            navItems.forEach(item => {
+                item.addEventListener('click', function() {
+                    navItems.forEach(nav => nav.classList.remove('active'));
+                    this.classList.add('active');
+                    console.log('Navigating to:', this.textContent);
+                });
+            });
+
+            // Load dashboard data
+            loadDashboardData();
+        });
+
+        // ===== DATA LOADING FUNCTION =====
+        async function loadDashboardData() {
+            try {
+                // Option 1: Load from Supabase (uncomment when ready)
+                // const { data: holdings, error } = await supabase
+                //     .from('holdings')
+                //     .select('*');
+                // if (error) throw error;
+
+                // Option 2: Use sample data (remove when using real data)
+                const holdings = sampleHoldings;
+
+                // Calculate statistics
+                const stats = calculateStatistics(holdings);
+                
+                // Update dashboard
+                updateDashboard(stats);
+                
+                // Populate holdings table
+                populateHoldingsTable(holdings);
+                
+                // Create charts
+                createPerformanceChart();
+                createAllocationChart(holdings);
+                createMaturityChart(holdings);
+                createCreditScatterChart(holdings);
+
+                // Initialize table sorting
+                initializeTableSorting();
+
+            } catch (error) {
+                console.error('Error loading data:', error);
+            }
+        }
+
+        // ===== STATISTICS CALCULATION =====
+        function calculateStatistics(holdings) {
+            const totalValue = holdings.reduce((sum, h) => sum + (h.quantity * h.current_price), 0);
+            const totalCost = holdings.reduce((sum, h) => sum + (h.quantity * h.cost_basis), 0);
+            const avgInterestRate = holdings.reduce((sum, h) => sum + h.interest_rate, 0) / holdings.length;
+            const totalHoldings = holdings.length;
+            
+            // Calculate 12-month forecast (simplified)
+            const annualReturn = totalValue * (avgInterestRate / 100);
+            
+            return {
+                totalNav: formatCurrency(totalValue),
+                avgRate: avgInterestRate.toFixed(1),
+                holdingsCount: totalHoldings,
+                cashflowForecast: formatCurrency(annualReturn),
+                benchmarkDiff: 2.4 // This would come from your benchmark data
+            };
+        }
+
+        // ===== UPDATE DASHBOARD =====
+        function updateDashboard(stats) {
+            document.getElementById('totalNav').textContent = stats.totalNav;
+            document.getElementById('totalHoldings').textContent = stats.holdingsCount + ' holdings';
+            document.getElementById('avgRate').textContent = '+' + stats.avgRate + '%';
+            document.getElementById('cashflowForecast').textContent = stats.cashflowForecast;
+            document.getElementById('benchmark').textContent = '↑ ' + stats.benchmarkDiff + '% vs benchmark';
+        }
+
+        // ===== POPULATE HOLDINGS TABLE =====
+        function populateHoldingsTable(holdings) {
+            currentHoldings = holdings; // Store for sorting
+            const tbody = document.getElementById('holdingsTableBody');
+            tbody.innerHTML = '';
+
+            holdings.forEach(holding => {
+                const value = holding.quantity * holding.current_price;
+                const returnPct = ((holding.current_price - holding.cost_basis) / holding.cost_basis * 100).toFixed(2);
+                
+                const row = document.createElement('tr');
+                row.innerHTML = `
+                    <td>${holding.security}</td>
+                    <td>${holding.quantity.toLocaleString()}</td>
+                    <td>${holding.current_price.toFixed(2)}</td>
+                    <td>${(value / 1000).toFixed(1)}K</td>
+                    <td style="color: ${returnPct >= 0 ? '#6bc9a8' : '#ff6b6b'}">${returnPct}%</td>
+                `;
+                tbody.appendChild(row);
+            });
+        }
+
+        // ===== CREATE PERFORMANCE CHART =====
+        function createPerformanceChart() {
+            const ctx = document.getElementById('performanceChart').getContext('2d');
+            
+            new Chart(ctx, {
+                type: 'line',
+                data: {
+                    labels: ['Jan', 'Feb', 'Mar', 'Apr', 'May', 'Jun', 'Jul', 'Aug', 'Sep', 'Oct', 'Nov', 'Dec'],
+                    datasets: [{
+                        label: 'NAV (M)',
+                        data: [95.2, 96.8, 97.5, 98.9, 99.7, 100.3, 100.8, 101.1, 101.4, 101.6, 101.7, 101.9],
+                        borderColor: '#6bc9a8',
+                        backgroundColor: 'rgba(107, 201, 168, 0.1)',
+                        tension: 0.4,
+                        fill: true,
+                        pointRadius: 3,
+                        pointHoverRadius: 5
+                    }]
+                },
+                options: {
+                    responsive: true,
+                    maintainAspectRatio: true,
+                    plugins: {
+                        legend: {
+                            labels: { color: '#7a9fb0', font: { size: 12 } }
+                        }
+                    },
+                    scales: {
+                        y: {
+                            ticks: { color: '#7a9fb0' },
+                            grid: { color: 'rgba(255, 255, 255, 0.05)' }
+                        },
+                        x: {
+                            ticks: { color: '#7a9fb0' },
+                            grid: { color: 'rgba(255, 255, 255, 0.05)' }
+                        }
+                    }
+                }
+            });
+        }
+
+        // ===== CREATE ALLOCATION BAR CHART =====
+        function createAllocationChart(holdings) {
+            const ctx = document.getElementById('allocationChart').getContext('2d');
+            
+            // Calculate allocation by security
+            const allocations = holdings.slice(0, 7).map(h => ({
+                label: h.security,
+                value: h.quantity * h.current_price
+            }));
+
+            new Chart(ctx, {
+                type: 'bar',
+                data: {
+                    labels: allocations.map(a => a.label),
+                    datasets: [{
+                        label: 'Value ($)',
+                        data: allocations.map(a => a.value),
+                        backgroundColor: '#6bc9a8',
+                        borderRadius: 4
+                    }]
+                },
+                options: {
+                    responsive: true,
+                    maintainAspectRatio: true,
+                    plugins: {
+                        legend: {
+                            display: false
+                        }
+                    },
+                    scales: {
+                        y: {
+                            ticks: { 
+                                color: '#7a9fb0',
+                                callback: function(value) {
+                                    return '$' + (value / 1000).toFixed(0) + 'K';
+                                }
+                            },
+                            grid: { color: 'rgba(255, 255, 255, 0.05)' }
+                        },
+                        x: {
+                            ticks: { color: '#7a9fb0' },
+                            grid: { display: false }
+                        }
+                    }
+                }
+            });
+        }
+		
+        // ===== UTILITY FUNCTIONS =====
+        function formatCurrency(value) {
+            if (value >= 1000000) {
+                return '$' + (value / 1000000).toFixed(1) + 'M';
+            } else if (value >= 1000) {
+                return '$' + (value / 1000).toFixed(1) + 'K';
+            }
+            return '$' + value.toFixed(2);
+        }
+
+        // ===== CREATE MATURITY EXPOSURE COLUMN CHART =====
+        function createMaturityChart(holdings) {
+            const ctx = document.getElementById('maturityChart').getContext('2d');
+            
+            // Group holdings by maturity ranges
+            const maturityRanges = {
+                '0-2 years': 0,
+                '3-5 years': 0,
+                '6-8 years': 0,
+                '9+ years': 0
+            };
+
+            holdings.forEach(h => {
+                const value = h.quantity * h.current_price;
+                if (h.maturity_years <= 2) {
+                    maturityRanges['0-2 years'] += value;
+                } else if (h.maturity_years <= 5) {
+                    maturityRanges['3-5 years'] += value;
+                } else if (h.maturity_years <= 8) {
+                    maturityRanges['6-8 years'] += value;
+                } else {
+                    maturityRanges['9+ years'] += value;
+                }
+            });
+
+            new Chart(ctx, {
+                type: 'bar',
+                data: {
+                    labels: Object.keys(maturityRanges),
+                    datasets: [{
+                        label: 'Exposure ($)',
+                        data: Object.values(maturityRanges),
+                        backgroundColor: [
+                            '#6bc9a8',
+                            '#5a9fb8',
+                            '#8bb4c9',
+                            '#7a9fb0'
+                        ],
+                        borderRadius: 4
+                    }]
+                },
+                options: {
+                    responsive: true,
+                    maintainAspectRatio: true,
+                    plugins: {
+                        legend: {
+                            display: false
+                        }
+                    },
+                    scales: {
+                        y: {
+                            ticks: { 
+                                color: '#7a9fb0',
+                                callback: function(value) {
+                                    return '$'+ (value / 1000000).toFixed(1) + 'M';
+                                }
+                            },
+                            grid: { color: 'rgba(255, 255, 255, 0.05)' }
+                        },
+                        x: {
+                            ticks: { color: '#7a9fb0' },
+                            grid: { display: false }
+                        }
+                    }
+                }
+            });
+        }
+
+        // ===== UTILITY FUNCTIONS =====
+        function formatCurrency(value) {
+            if (value >= 1000000) {
+                return '$' + (value / 1000000).toFixed(1) + 'M';
+            } else if (value >= 1000) {
+                return '$' + (value / 1000).toFixed(1) + 'K';
+            }
+            return '$' + value.toFixed(2);
+        }
+
+        // ===== CREATE CREDIT RATING vs INTEREST SCATTER PLOT =====
+        function createCreditScatterChart(holdings) {
+            const ctx = document.getElementById('creditScatterChart').getContext('2d');
+            
+            // Prepare scatter data
+            const scatterData = holdings.map(h => ({
+                x: h.credit_rating,
+                y: h.interest_rate,
+                label: h.security
+            }));
+
+            new Chart(ctx, {
+                type: 'scatter',
+                data: {
+                    datasets: [{
+                        label: 'Holdings',
+                        data: scatterData,
+                        backgroundColor: '#6bc9a8',
+                        borderColor: '#5a9fb8',
+                        borderWidth: 2,
+                        pointRadius: 6,
+                        pointHoverRadius: 8
+                    }]
+                },
+                options: {
+                    responsive: true,
+                    maintainAspectRatio: true,
+                    plugins: {
+                        legend: {
+                            labels: { color: '#7a9fb0', font: { size: 12 } }
+                        },
+                        tooltip: {
+                            callbacks: {
+                                label: function(context) {
+                                    const point = context.raw;
+                                    return `${point.label}: Rating ${point.x}, Interest ${point.y}%`;
+                                }
+                            }
+                        }
+                    },
+                    scales: {
+                        y: {
+                            title: {
+                                display: true,
+                                text: 'Interest Rate (%)',
+                                color: '#7a9fb0'
+                            },
+                            ticks: { color: '#7a9fb0' },
+                            grid: { color: 'rgba(255, 255, 255, 0.05)' }
+                        },
+                        x: {
+                            title: {
+                                display: true,
+                                text: 'Credit Rating',
+                                color: '#7a9fb0'
+                            },
+                            ticks: { color: '#7a9fb0' },
+                            grid: { color: 'rgba(255, 255, 255, 0.05)' },
+                            min: 7,
+                            max: 10
+                        }
+                    }
+                }
+            });
+        }
+
+        // ===== TABLE SORTING FUNCTIONALITY =====
+        let currentHoldings = [];
+        let sortState = { column: null, direction: 'asc' };
+
+        function initializeTableSorting() {
+            const headers = document.querySelectorAll('.holdings-table th.sortable');
+            
+            headers.forEach(header => {
+                header.addEventListener('click', function() {
+                    const column = this.getAttribute('data-column');
+                    sortTable(column);
+                });
+            });
+        }
+
+        function sortTable(column) {
+            // Toggle sort direction
+            if (sortState.column === column) {
+                sortState.direction = sortState.direction === 'asc' ? 'desc' : 'asc';
+            } else {
+                sortState.column = column;
+                sortState.direction = 'asc';
+            }
+
+            // Sort the holdings array
+            currentHoldings.sort((a, b) => {
+                let aVal, bVal;
+
+                switch(column) {
+                    case 'security':
+                        aVal = a.security;
+                        bVal = b.security;
+                        break;
+                    case 'quantity':
+                        aVal = a.quantity;
+                        bVal = b.quantity;
+                        break;
+                    case 'price':
+                        aVal = a.current_price;
+                        bVal = b.current_price;
+                        break;
+                    case 'value':
+                        aVal = a.quantity * a.current_price;
+                        bVal = b.quantity * b.current_price;
+                        break;
+                    case 'return':
+                        aVal = ((a.current_price - a.cost_basis) / a.cost_basis);
+                        bVal = ((b.current_price - b.cost_basis) / b.cost_basis);
+                        break;
+                }
+
+                if (typeof aVal === 'string') {
+                    return sortState.direction === 'asc' 
+                        ? aVal.localeCompare(bVal)
+                        : bVal.localeCompare(aVal);
+                } else {
+                    return sortState.direction === 'asc' 
+                        ? aVal - bVal
+                        : bVal - aVal;
+                }
+            });
+
+            // Update table headers
+            document.querySelectorAll('.holdings-table th.sortable').forEach(th => {
+                th.classList.remove('sorted-asc', 'sorted-desc');
+            });
+            const activeHeader = document.querySelector(`th[data-column="${column}"]`);
+            activeHeader.classList.add(sortState.direction === 'asc' ? 'sorted-asc' : 'sorted-desc');
+
+            // Re-render table
+            populateHoldingsTable(currentHoldings);
+        }
+
+        // ===== UTILITY FUNCTIONS =====
+        function formatCurrency(value) {
+            if (value >= 1000000) {
+                return '$' + (value / 1000000).toFixed(1) + 'M';
+            } else if (value >= 1000) {
+                return '$' + (value / 1000).toFixed(1) + 'K';
+            }
+            return '$' + value.toFixed(2);
+        }
+    </script>
+</body>
+</html>
