@@ -460,4 +460,4 @@ function sortTable(column) {
 
     // Re-render table
     populateHoldingsTable(currentHoldings);
-}
+};
