@@ -43,7 +43,7 @@ const tbody = document.querySelector("#positionsTable tbody");
 loadBtn.addEventListener("click", loadPositions);
 
 // ===============================
-// Main loader
+// Main loader of positions
 // ===============================
 async function loadPositions() {
   const { data, error } = await supabase
