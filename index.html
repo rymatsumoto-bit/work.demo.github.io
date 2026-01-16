@@ -11,6 +11,7 @@
             margin: 0;
             padding: 0;
             box-sizing: border-box;
+            /*outline: 1px solid #d84315;*/
         }
 
         body {
@@ -81,11 +82,35 @@
 
         /* Main Content */
         .container {
+            display: grid;
             padding: 40px;
             max-width: 1600px;
-            margin: 0 auto;
+            margin: 0;
+            align-items: start;
+            gap: 25px;
         }
 
+        .grid-column {
+            display: grid;
+            grid-template-columns: 1fr;
+            gap: 25px;
+        }
+        
+        .grid-kpi {
+            display: grid;
+            grid-auto-flow: column;
+            grid-auto-columns: minmax(150px, 1fr);
+            gap: 25px;
+        }
+        
+        .grid-1-1-1 {
+            display: grid;
+            grid-template-columns: 1fr 1fr 1fr;
+            gap: 25px;
+            margin: 0;
+        }
+
+        
         .grid {
             display: grid;
             grid-template-columns: repeat(auto-fit, minmax(280px, 1fr));
@@ -98,14 +123,35 @@
         .card {
             background: linear-gradient(135deg, #1a3d4d 0%, #0d2330 100%);
             border-radius: 8px;
-            padding: 30px;
+            padding: 25px;
             position: relative;
             overflow: hidden;
             transition: all 0.3s ease;
             border: 1px solid rgba(90, 159, 184, 0.2);
-            height: 100%;
-            display: flex;
-            flex-direction: column;
+            min-height: 300px;
+            max-height: 400px;
+        }
+
+        .card-kpi {
+            background: linear-gradient(135deg, #1a3d4d 0%, #0d2330 100%);
+            border-radius: 8px;
+            padding: 25px;
+            position: relative;
+            overflow: hidden;
+            transition: all 0.3s ease;
+            border: 1px solid rgba(90, 159, 184, 0.2);
+            min-height: 125px;
+            max-height: 400px;
+        }
+
+        .card-comparison-divider {
+            display: grid;
+            grid-template-columns: 1fr 1fr;
+        }
+
+        .card-comparison-column {
+            display: grid;
+            grid-template-columns: 1fr;
         }
 
         .card:hover {
@@ -116,6 +162,7 @@
 
         .card.wide {
             grid-column: span 2;
+            min-height: 300px;
         }
 
         .card-label {
@@ -128,7 +175,7 @@
         }
 
         .card-value {
-            font-size: 42px;
+            font-size: 29px;
             font-weight: 600;
             color: #ffffff;
             line-height: 1;
@@ -163,7 +210,6 @@
             width: 100%;
             border-collapse: collapse;
             margin-top: 15px;
-            max-height: 300px;
             overflow-y: auto;
             display: block;
         }
@@ -216,12 +262,10 @@
             font-size: 13px;
             color: #ffffff;
             border-bottom: 1px solid rgba(255, 255, 255, 0.05);
-            text-align: right;
         }
 
         .holdings-table tbody {
             display: block;
-            max-height: 250px;
             overflow-y: auto;
         }
 
@@ -275,555 +319,1164 @@
     <!-- Navigation Bar -->
     <nav class="nav-bar">
         <div class="nav-item active">OVERVIEW</div>
-        <div class="nav-item">FACTOR 01</div>
-        <div class="nav-item">PERFORMANCE</div>
-        <div class="nav-item">CASH FLOW</div>
     </nav>
 
     <!-- Main Content -->
     <div class="container">
-        <!-- Main Metrics Grid -->
-        <div class="grid">
-            <!-- Total NAV Card -->
-            <div class="card">
-                <div class="card-label">TOTAL NAV CASH</div>
-                <div class="card-value" id="totalNav">$101.9M</div>
-                <div class="card-subtitle" id="totalHoldings">64 holdings</div>
-            </div>
 
-            <!-- 12M Cashflow Forecast Card -->
-            <div class="card">
-                <div class="card-label">12M CASHFLOW FORECAST</div>
-                <div class="card-value" id="cashflowForecast">$1.9M</div>
-                <!-- <div class="card-subtitle" id="cashHoldings">24 holdings</div> -->
-            </div>
+        <!-- KPIs -->
+        <div class="grid-kpi">
+                <!-- Total NAV Card -->
+                <div class="card-kpi">
+                    <div class="card-label">TOTAL NAV CASH</div>
+                    <div class="card-comparison-divider"> 
+                        <div class="card-comparison-column">
+                            <div class="card-value" id="totalNav" style="font-size: 36px;";></div>
+                            <div class="card-subtitle"></div>
+                        </div>
+                        <div class="card-comparison-column">
+                            <div class="card-value"></div>
+                            <div class="card-subtitle"></div>
+                        </div>
+                    </div>
+                </div>
 
-            <!-- Average Interest Rate Card -->
-            <div class="card">
-                <div class="card-label">AVG. INTEREST RATE</div>
-                <div class="card-value positive" id="avgRate">+14.2%</div>
-                <div class="card-comparison" id="benchmark">↑ 2.4% vs benchmark</div>
-            </div>
+                <!-- Holdings Count Card -->
+                <div class="card-kpi">
+                    <div class="card-label">HOLDINGS</div>
+                    <div class="card-comparison-divider"> 
+                        <div class="card-comparison-column">
+                            <div class="card-value">38</div>
+                            <div class="card-subtitle">CURRENT</div>
+                        </div>
+                        <div class="card-comparison-column">
+                            <div class="card-value" id="totalHoldings">38</div>
+                            <div class="card-subtitle">PROPOSED</div>
+                        </div>
+                    </div>
+                </div>
 
-            <!-- Credit Rating vs Interest Scatter Plot -->
-            <div class="card wide">
-                <div class="card-label">CREDIT RATING vs INTEREST RATE</div>
-                <canvas id="creditScatterChart" style="max-height: 300px;"></canvas>
-            </div>
-            
-                        <!-- Asset Allocation Bar Chart -->
-            <div class="card">
-                <div class="card-label">SECTOR ALLOCATION</div>
-                <canvas id="allocationChart" style="max-height: 250px;"></canvas>
-            </div>
+                <!-- KPI Gross Yield -->
+                <div class="card-kpi">
+                    <div class="card-label">AVG GROSS YIELD</div>
+                    <div class="card-comparison-divider"> 
+                        <div class="card-comparison-column">
+                            <div class="card-value">3.4%</div>
+                            <div class="card-subtitle">CURRENT</div>
+                        </div>
+                        <div class="card-comparison-column">
+                            <div class="card-value">4.5% </div>
+                            <div class="card-subtitle">PROPOSED</div>
+                        </div>
+                    </div>
+                </div>
 
-            <!-- Maturity Exposure Column Chart -->
-            <div class="card">
-                <div class="card-label">MATURITY EXPOSURE</div>
-                <canvas id="maturityChart" style="max-height: 250px;"></canvas>
-            </div>
+                <!-- KPI Duration -->
+                <div class="card-kpi">
+                    <div class="card-label">AVG DURATION</div>
+                    <div class="card-comparison-divider"> 
+                        <div class="card-comparison-column">
+                            <div class="card-value">4.3 yrs</div>
+                            <div class="card-subtitle">CURRENT</div>
+                        </div>
+                        <div class="card-comparison-column">
+                            <div class="card-value">4.4 yrs </div>
+                            <div class="card-subtitle">PROPOSED</div>
+                        </div>
+                    </div>
+                </div>
 
-            <!-- Holdings Table Card -->
-            <div class="card wide">
-                <div class="card-label">TOP HOLDINGS</div>
-                <div class="holdings-table-container">
-                    <table class="holdings-table">
-                        <thead>
-                            <tr>
-                                <th class="sortable" data-column="security">Security</th>
-                                <th class="sortable" data-column="market_value_usd">Mkt Value USD</th>
-                                <th class="sortable" data-column="notional">Notional</th>
-                                <th class="sortable" data-column="notional_ccy">Notional CCY</th>
-                                <th class="sortable" data-column="price">Price</th>
-                                <th class="sortable" data-column="return">Return</th>
-                            </tr>
-                        </thead>
-                        <tbody id="holdingsTableBody">
-                            <tr>
-                                <td colspan="5" class="loading">Loading holdings...</td>
-                            </tr>
-                        </tbody>
-                    </table>
+                <!-- KPI Liquidity -->
+                <div class="card-kpi">
+                    <div class="card-label">AVG LIQUIDITY</div>
+                    <div class="card-comparison-divider"> 
+                        <div class="card-comparison-column">
+                            <div class="card-value">3-6 mo</div>
+                            <div class="card-subtitle">CURRENT</div>
+                        </div>
+                        <div class="card-comparison-column">
+                            <div class="card-value">3-6 mo </div>
+                            <div class="card-subtitle">PROPOSED</div>
+                        </div>
+                    </div>
+                </div>
+
+        </div>
+
+        <!-- Charts Grid-->
+        <div class="grid-1-1-1">
+            <!-- Left Colunm -->
+            <div class="grid-column">
+                <!-- Holdings Table Card -->
+                <div class="card" style="max-height: 1200px;">
+                    <div class="card-label">HOLDINGS</div>
+                    <div class="holdings-table-container">
+                        <table class="holdings-table" style="max-height: 1100px;">
+                            <thead>
+                                <tr>
+                                    <th class="sortable" data-column="security">Security</th>
+                                    <th class="sortable" data-column="quantity">Desc</th>
+                                    <th class="sortable" data-column="price">Type</th>
+                                    <th class="sortable" data-column="value">Yield</th>
+                                    <th class="sortable" data-column="return">Value</th>
+                                </tr>
+                            </thead>
+                            <tbody id="holdingsTableBody">
+                                <tr>
+                                    <td colspan="5" class="loading">Loading holdings...</td>
+                                </tr>
+                            </tbody>
+                        </table>
+                    </div>
                 </div>
             </div>
-            
-            <!-- Performance Chart Card -->
-            <div class="card wide">
-                <div class="card-label">12-MONTH PERFORMANCE TREND</div>
-                <canvas id="performanceChart" style="max-height: 250px;"></canvas>
+
+            <!-- Middle Colunm -->
+            <div class="grid-column">
+                    <!-- CHART 01 -->
+                    <div class="card">
+                        <div class="card-label">ASSET ALLOCATION</div>
+                        <canvas id="allocationChart"></canvas>
+                    </div>
+                    <!-- Credit Rating vs Interest Scatter Plot -->
+                    <div class="card">
+                        <div class="card-label">CREDIT RATING DISTRIBUTION</div>
+                        <canvas id="creditChart"></canvas>
+                    </div>
+                    <!-- Performance Chart Card -->
+                    <div class="card">
+                        <div class="card-label">MATURITY DISTRIBUTION</div>
+                        <canvas id="maturityChart"></canvas>
+                    </div>
+                    <!-- Credit Rating vs Interest Scatter Plot -->
+                    <div class="card">
+                        <div class="card-label">NOMINAL CURRENCY</div>
+                        <canvas id="currencyChart"></canvas>
+                    </div>
             </div>
-            
+
+            <!-- Right Colunm -->
+            <div class="grid-column">
+                    <!-- Asset Allocation Bar Chart -->
+                    <div class="card">
+                        <div class="card-label">ESTIMATED GROSS YIELD</div>
+                        <canvas id="yieldChart"></canvas>
+                    </div>
+
+                    <!-- Maturity Exposure Column Chart -->
+                    <div class="card">
+                        <div class="card-label">LIQUIDITY</div>
+                        <canvas id="liquidityChart"></canvas>
+                    </div>
+                    <!-- Asset Allocation Bar Chart -->
+                    <div class="card">
+                        <div class="card-label">DURATION</div>
+                        <canvas id="durationChart"></canvas>
+                    </div>
+
+                    <!-- Maturity Exposure Column Chart -->
+                    <div class="card">
+                        <div class="card-label">YTM x DURATION</div>
+                        <canvas id="creditScatterChart"></canvas>
+                    </div>
+            </div>
         </div>
     </div>
 
-    <script type="module">
+    <script>
+        // ===== SUPABASE CONFIGURATION =====
+        // Replace with your actual Supabase credentials
+        const SUPABASE_URL = 'YOUR_SUPABASE_URL';
+        const SUPABASE_KEY = 'YOUR_SUPABASE_ANON_KEY';
+        
+        // Initialize Supabase client
+        // Uncomment the line below and add your credentials
+        // const supabase = window.supabase.createClient(SUPABASE_URL, SUPABASE_KEY);
 
-// ===== SUPABASE CONFIGURATION =====
+        // ===== SAMPLE DATA (Remove when using real Supabase data) =====
+        const sampleHoldings = [
+{ security: 'US455780CL28', 	desc: 'Republic of Indonesia 2032', 	type: 'Bond', 	yield: 7.15, 	mkt_val: 1552248.28 },
+{ security: 'US91282CJL48', 	desc: 'US Treasury 2Y Note', 	type: 'Bond', 	yield: 4.15, 	mkt_val: 2953763.3 },
+{ security: 'VMFXX', 	desc: 'US Dollar Money Market Fund', 	type: 'Cash', 	yield: 0.48, 	mkt_val: 7500000 },
+{ security: 'V', 	desc: 'Visa Inc', 	type: 'Stock', 	yield: 0.78, 	mkt_val: 2898924 },
+{ security: 'US91087BAH24', 	desc: 'Republic of Mexico 2031', 	type: 'Bond', 	yield: 8.45, 	mkt_val: 2318720.92 },
+{ security: 'HYG', 	desc: 'iShares iBoxx High Yield Corporate Bond ETF', 	type: 'ETF', 	yield: 7.15, 	mkt_val: 4826819.28 },
+{ security: 'MINT', 	desc: 'PIMCO Enhanced Short Maturity Active ETF', 	type: 'ETF', 	yield: 4.35, 	mkt_val: 2509632.73 },
+{ security: 'US91282CJX01', 	desc: 'US Treasury 3Y Note', 	type: 'Bond', 	yield: 4.05, 	mkt_val: 4437573.54 },
+{ security: 'US478160CD18', 	desc: 'Corporate Bond - Johnson & Johnson 2026', 	type: 'Bond', 	yield: 3.95, 	mkt_val: 2685811.58 },
+{ security: 'SHY', 	desc: 'iShares 1-3 Year Treasury Bond ETF', 	type: 'ETF', 	yield: 4.1, 	mkt_val: 4443043.5 },
+{ security: 'JNK', 	desc: 'SPDR Bloomberg High Yield Bond ETF', 	type: 'ETF', 	yield: 7.3, 	mkt_val: 3465756 },
+{ security: 'EEM', 	desc: 'iShares MSCI Emerging Markets ETF', 	type: 'ETF', 	yield: 2.45, 	mkt_val: 5718707 },
+{ security: 'VO', 	desc: 'Vanguard Mid-Cap ETF', 	type: 'ETF', 	yield: 1.38, 	mkt_val: 3624568.5 },
+{ security: 'SAP', 	desc: 'SAP SE', 	type: 'Stock', 	yield: 1.42, 	mkt_val: 2063674.11 },
+{ security: 'MC.PA', 	desc: 'LVMH Moet Hennessy Louis Vuitton SE', 	type: 'Stock', 	yield: 1.65, 	mkt_val: 2084610 },
+{ security: 'IEUR', 	desc: 'iShares MSCI Europe ETF', 	type: 'ETF', 	yield: 2.85, 	mkt_val: 2483292 },
+{ security: 'NVDA', 	desc: 'NVIDIA Corp', 	type: 'Stock', 	yield: 0.03, 	mkt_val: 5095035 },
+{ security: 'EMB', 	desc: 'iShares JP Morgan USD Emerging Markets Bond ETF', 	type: 'Bond', 	yield: 6.95, 	mkt_val: 4142190 },
+{ security: 'US88033GBB61', 	desc: 'Corporate Bond - Tenet Healthcare 2028', 	type: 'Bond', 	yield: 7.25, 	mkt_val: 1359395.62 },
+{ security: 'XLV', 	desc: 'Health Care Select Sector SPDR Fund', 	type: 'Stock', 	yield: 1.52, 	mkt_val: 2400216 },
+{ security: 'BSV', 	desc: 'Vanguard Short-Term Bond ETF', 	type: 'ETF', 	yield: 4.2, 	mkt_val: 5920500 },
+{ security: 'IWM', 	desc: 'iShares Russell 2000 ETF', 	type: 'ETF', 	yield: 1.25, 	mkt_val: 2949647.11 },
+{ security: 'ASML', 	desc: 'ASML Holding NV', 	type: 'Stock', 	yield: 0.92, 	mkt_val: 2780681.22 },
+{ security: 'TCEHY', 	desc: 'Tencent Holdings Ltd', 	type: 'Stock', 	yield: 0.32, 	mkt_val: 4486950 },
+{ security: 'US1248EPBT30', 	desc: 'Corporate Bond - CCO Holdings 2029', 	type: 'Bond', 	yield: 7.85, 	mkt_val: 1777059.63 },
+{ security: '005930.KS', 	desc: 'Samsung Electronics Co Ltd', 	type: 'Stock', 	yield: 2.35, 	mkt_val: 16362528 },
+{ security: 'US594918BW52', 	desc: 'Corporate Bond - Microsoft 2026', 	type: 'Bond', 	yield: 3.88, 	mkt_val: 3523902.81 },
+{ security: 'US084664CR17', 	desc: 'Corporate Bond - Berkshire Hathaway 2027', 	type: 'Bond', 	yield: 4.25, 	mkt_val: 2936106.94 },
+{ security: 'JPMXX', 	desc: 'JP Morgan Liquidity Fund', 	type: 'Cash', 	yield: 0.52, 	mkt_val: 7500000 },
+{ security: 'XLF', 	desc: 'Financial Select Sector SPDR Fund', 	type: 'Stock', 	yield: 2.15, 	mkt_val: 2527140 },
+{ security: 'MSFT', 	desc: 'Microsoft Corp', 	type: 'Stock', 	yield: 0.72, 	mkt_val: 8768811 },
+{ security: 'NVO', 	desc: 'Novo Nordisk A/S', 	type: 'Stock', 	yield: 1.18, 	mkt_val: 1039392 },
+{ security: 'VWO', 	desc: 'Vanguard FTSE Emerging Markets ETF', 	type: 'ETF', 	yield: 2.68, 	mkt_val: 6709056 },
+{ security: 'EWJ', 	desc: 'iShares MSCI Japan ETF', 	type: 'ETF', 	yield: 1.95, 	mkt_val: 2540848.03 },
+{ security: 'AAPL', 	desc: 'Apple Inc', 	type: 'Stock', 	yield: 0.46, 	mkt_val: 6380938 },
+{ security: 'INDA', 	desc: 'iShares MSCI India ETF', 	type: 'ETF', 	yield: 0.85, 	mkt_val: 3990900 },
+{ security: 'JPM', 	desc: 'JPMorgan Chase & Co', 	type: 'Stock', 	yield: 2.45, 	mkt_val: 3982104 },
+{ security: 'USP16030EV43', 	desc: 'Republic of Brazil 2030', 	type: 'Bond', 	yield: 10.25, 	mkt_val: 1933055.28 },
+{ security: 'TSM', 	desc: 'Taiwan Semiconductor Manufacturing', 	type: 'Stock', 	yield: 1.55, 	mkt_val: 4837657.5 },
+{ security: 'US345370CT12', 	desc: 'Corporate Bond - Ford Motor 2027', 	type: 'Bond', 	yield: 6.75, 	mkt_val: 1540070.28 },
+{ security: 'SONY', 	desc: 'Sony Group Corp', 	type: 'Stock', 	yield: 0.68, 	mkt_val: 2049107.3 },
+{ security: 'HYEM', 	desc: 'VanEck Emerging Markets High Yield Bond ETF', 	type: 'Bond', 	yield: 8.95, 	mkt_val: 2691900 }
+];
 
-import { createClient } from "https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2/+esm";
+        // ===== NAVIGATION FUNCTIONALITY =====
+        document.addEventListener('DOMContentLoaded', function() {
+            const navItems = document.querySelectorAll('.nav-item');
+            
+            navItems.forEach(item => {
+                item.addEventListener('click', function() {
+                    navItems.forEach(nav => nav.classList.remove('active'));
+                    this.classList.add('active');
+                    console.log('Navigating to:', this.textContent);
+                });
+            });
 
-const SUPABASE_URL = "https://kdwxugydvjdoaxwjhqqk.supabase.co";
-const SUPABASE_ANON_KEY = "eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6Imtkd3h1Z3lkdmpkb2F4d2pocXFrIiwicm9sZSI6ImFub24iLCJpYXQiOjE3NjQ4NzE4NDAsImV4cCI6MjA4MDQ0Nzg0MH0.MfPhBS6SV1wKL8QXu_Bo5iP1rVyrsS4XaqAm69NQMKA";
-
-const supabase = createClient(
-  SUPABASE_URL,
-  SUPABASE_ANON_KEY
-);
-
-// ===== SAMPLE DATA (Remove when using real Supabase data) =====
-//const sampleHoldings = [
-//    { security: 'AAPL', quantity: 1000, current_price: 180.50, cost_basis: 150.00, interest_rate: 12.5, credit_rating: 8.5, maturity_years: 2 },
-//    { security: 'MSFT', quantity: 800, current_price: 380.25, cost_basis: 320.00, interest_rate: 15.2, credit_rating: 9.0, maturity_years: 5 },
-//    { security: 'GOOGL', quantity: 500, current_price: 140.80, cost_basis: 120.00, interest_rate: 14.8, credit_rating: 8.8, maturity_years: 3 },
-//    { security: 'AMZN', quantity: 600, current_price: 165.30, cost_basis: 140.00, interest_rate: 13.9, credit_rating: 8.2, maturity_years: 7 },
-//    { security: 'TSLA', quantity: 400, current_price: 245.60, cost_basis: 200.00, interest_rate: 16.1, credit_rating: 7.5, maturity_years: 4 },
-//    { security: 'META', quantity: 700, current_price: 425.90, cost_basis: 350.00, interest_rate: 14.3, credit_rating: 8.6, maturity_years: 1 },
-//    { security: 'NVDA', quantity: 300, current_price: 495.20, cost_basis: 400.00, interest_rate: 15.7, credit_rating: 8.9, maturity_years: 10 },
-//    { security: 'JPM', quantity: 900, current_price: 155.40, cost_basis: 130.00, interest_rate: 11.8, credit_rating: 9.2, maturity_years: 6 },
-//    { security: 'BAC', quantity: 1200, current_price: 32.70, cost_basis: 28.00, interest_rate: 10.5, credit_rating: 8.7, maturity_years: 8 },
-//    { security: 'WFC', quantity: 850, current_price: 48.90, cost_basis: 42.00, interest_rate: 11.2, credit_rating: 8.4, maturity_years: 3 }
-//];
-
-// ===== NAVIGATION FUNCTIONALITY =====
-document.addEventListener('DOMContentLoaded', function() {
-    const navItems = document.querySelectorAll('.nav-item');
-    
-    navItems.forEach(item => {
-        item.addEventListener('click', function() {
-            navItems.forEach(nav => nav.classList.remove('active'));
-            this.classList.add('active');
-            console.log('Navigating to:', this.textContent);
+            // Load dashboard data
+            loadDashboardData();
         });
-    });
 
-    // Load dashboard data
-    loadDashboardData();
-});
+        // ===== DATA LOADING FUNCTION =====
+        async function loadDashboardData() {
+            try {
+                // Option 1: Load from Supabase (uncomment when ready)
+                // const { data: holdings, error } = await supabase
+                //     .from('holdings')
+                //     .select('*');
+                // if (error) throw error;
 
-// ===== DATA LOADING FUNCTION =====
-async function loadDashboardData() {
-    try {
-        // Option 1: Load from Supabase (uncomment when ready)
-        //const { data: holdings, error } = await supabase
-        //    .from('fixed_income_portfolio')
-        //    .select('*');
-        //if (error) throw error;
+                // Option 2: Use sample data (remove when using real data)
+                const holdings = sampleHoldings;
 
-         // Parallel fetching: Both tables start loading at the same time
-        const [holdingsResponse, creditRatingResponse] = await Promise.all([
-            supabase.from('fixed_income_portfolio').select('*'),
-            supabase.from('parm_credit_rating').select('*')
-        ]);
+                // Calculate statistics
+                const stats = calculateStatistics(holdings);
+                
+                // Update dashboard
+                updateDashboard(stats);
+                
+                // Populate holdings table
+                populateHoldingsTable(holdings);
+                
+                // Create charts
+                //createPerformanceChart();
+                createAllocationChart();
+                createYieldChart();
+                createCreditChart();
+                createLiquidityChart();
+                createMaturityChart();
+                createDurationChart();
+                createCurrencyChart();
+                createCreditScatterChart();
 
-        // Destructure data and check for errors for both requests
-        const { data: holdings, error: holdingsError } = holdingsResponse;
-        const { data: creditRatings, error: creditError } = creditRatingResponse;
+                // Initialize table sorting
+                initializeTableSorting();
 
-        if (holdingsError) throw holdingsError;
-        if (creditError) throw creditError;
-
-        // Option 2: Use sample data (remove when using real data)
-        // const holdings = sampleHoldings;
-
-        // Calculate statistics
-        const stats = calculateStatistics(holdings);
-        
-        // Update dashboard
-        updateDashboard(stats);
-        
-        // Populate holdings table
-        populateHoldingsTable(holdings);
-        
-        // Create charts
-        createPerformanceChart();
-        createAllocationChart(holdings);
-        createMaturityChart(holdings);
-        createCreditScatterChart(holdings, creditRatings);
-
-        // Initialize table sorting
-        initializeTableSorting();
-
-    } catch (error) {
-        console.error('Error loading data:', error);
-    }
-}
-
-// ===== STATISTICS CALCULATION =====
-function calculateStatistics(holdings) {
-    const totalMarketValue = holdings.reduce((sum, h) => sum + h.market_value_usd, 0);
-    // const totalCost = holdings.reduce((sum, h) => sum + (h.quantity * h.cost_basis), 0);
-    const weightedInterestRate = holdings.reduce((sum, h) => sum + h.coupon * h.market_value_usd, 0);
-    const totalHoldings = holdings.length;
-    
-    // Calculate 12-month forecast (simplified)
-    const avgInterestRate = weightedInterestRate / totalMarketValue;
-    const annualReturn = totalMarketValue * (avgInterestRate / 100);
-    
-    return {
-        totalNav: formatCurrency(totalMarketValue),
-        avgRate: avgInterestRate.toFixed(1),
-        holdingsCount: totalHoldings,
-        cashflowForecast: formatCurrency(annualReturn),
-        benchmarkDiff: 2.4 // This would come from your benchmark data
-    };
-}
-
-// ===== UPDATE DASHBOARD =====
-function updateDashboard(stats) {
-    document.getElementById('totalNav').textContent = stats.totalNav;
-    document.getElementById('totalHoldings').textContent = stats.holdingsCount + ' holdings';
-    document.getElementById('avgRate').textContent = '+' + stats.avgRate + '%';
-    document.getElementById('cashflowForecast').textContent = stats.cashflowForecast;
-    document.getElementById('benchmark').textContent = '↑ ' + stats.benchmarkDiff + '% vs benchmark';
-}
-
-// ===== POPULATE HOLDINGS TABLE =====
-function populateHoldingsTable(holdings) {
-    currentHoldings = holdings; // Store for sorting
-    const tbody = document.getElementById('holdingsTableBody');
-    tbody.innerHTML = '';
-
-    holdings.forEach(holding => {
-        const value = holding.notional;
-        const returnPct = ((holding.price/holding.cost_basis-1) * 100).toFixed(2);
-        
-        const row = document.createElement('tr');
-        row.innerHTML = `
-            <td>${holding.ISIN}</td>
-            <td>${holding.market_value_usd.toLocaleString()}</td>
-            <td>${holding.notional.toLocaleString()}</td>
-            <td>${holding.notional_ccy.toLocaleString()}</td>
-            <td>${holding.price.toFixed(2)}</td>
-            <td style="color: ${returnPct >= 0 ? '#6bc9a8' : '#ff6b6b'}">${returnPct}%</td>
-        `;
-        tbody.appendChild(row);
-    });
-}
-
-// ===== CREATE PERFORMANCE CHART =====
-function createPerformanceChart() {
-    const ctx = document.getElementById('performanceChart').getContext('2d');
-    
-    new Chart(ctx, {
-        type: 'line',
-        data: {
-            labels: ['Jan', 'Feb', 'Mar', 'Apr', 'May', 'Jun', 'Jul', 'Aug', 'Sep', 'Oct', 'Nov', 'Dec'],
-            datasets: [{
-                label: 'NAV (M)',
-                data: [95.2, 96.8, 97.5, 98.9, 99.7, 100.3, 100.8, 101.1, 101.4, 101.6, 101.7, 101.9],
-                borderColor: '#6bc9a8',
-                backgroundColor: 'rgba(107, 201, 168, 0.1)',
-                tension: 0.4,
-                fill: true,
-                pointRadius: 3,
-                pointHoverRadius: 5
-            }]
-        },
-        options: {
-            responsive: true,
-            maintainAspectRatio: true,
-            plugins: {
-                legend: {
-                    labels: { color: '#7a9fb0', font: { size: 12 } }
-                }
-            },
-            scales: {
-                y: {
-                    ticks: { color: '#7a9fb0' },
-                    grid: { color: 'rgba(255, 255, 255, 0.05)' }
-                },
-                x: {
-                    ticks: { color: '#7a9fb0' },
-                    grid: { color: 'rgba(255, 255, 255, 0.05)' }
-                }
+            } catch (error) {
+                console.error('Error loading data:', error);
             }
         }
-    });
-}
 
-// ===== CREATE ALLOCATION BAR CHART =====
-function createAllocationChart(holdings) {
-    const ctx = document.getElementById('allocationChart').getContext('2d');
-    
-    // Calculate allocation by security
-    const allocations = holdings.slice(0, 11).map(h => ({
-        label: h.gics_sector,
-        value: h.market_value_usd
-    }));
+        // ===== STATISTICS CALCULATION =====
+        function calculateStatistics(holdings) {
+            const totalValue = holdings.reduce((sum, h) => sum + h.mkt_val, 0);
+            const totalHoldings = holdings.length;
+            
+            return {
+                totalNav: formatCurrency(totalValue),
+                holdingsCount: totalHoldings,
+            };
+        }
 
-    allocations.sort((a, b) => b.value - a.value);
+        // ===== UPDATE DASHBOARD =====
+        function updateDashboard(stats) {
+            document.getElementById('totalNav').textContent = stats.totalNav;
+            document.getElementById('totalHoldings').textContent = stats.holdingsCount;
+        }
+
+        // ===== POPULATE HOLDINGS TABLE =====
+        function populateHoldingsTable(holdings) {
+            currentHoldings = holdings; // Store for sorting
+            const tbody = document.getElementById('holdingsTableBody');
+            tbody.innerHTML = '';
+
+            holdings.forEach(holding => {
+                const row = document.createElement('tr');
+                row.innerHTML = `
+                    <td>${holding.security}</td>
+                    <td>${holding.desc}</td>
+                    <td>${holding.type}</td>
+                    <td>${holding.yield.toFixed(2)}</td>
+                    <td>${formatCurrency(holding.mkt_val)}</td>
+                `;
+                tbody.appendChild(row);
+            });
+        }
+
+   
+        // ===== CREATE ALLOCATION BAR CHART =====
+        function createAllocationChart() {
+        const ctx = document
+            .getElementById('allocationChart')
+            .getContext('2d');
+
+    const currentAllocation = {
+        'Cash': 0.0904746282022449,
+        'Short Term Bonds': 0.177392604676246,
+        'High Yield': 0.0782249715934789,
+        'Emerging Markets Fixed Income': 0.0762285805836939,
+        'Developed Equities - US': 0.232986544702683,
+        'Developed Equities - Europe': 0.0630406058154662,
+        'Developed Equities - Asia Pacific': 0.155556893525186,
+        'Emerging Equities': 0.126095170901001
+    };
+
+    const proposedAllocation = {
+        'Cash': 0.070,
+        'Short Term Bonds': 0.190,
+        'High Yield': 0.090,
+        'Emerging Markets Fixed Income': 0.070,
+        'Developed Equities - US': 0.260,
+        'Developed Equities - Europe': 0.060,
+        'Developed Equities - Asia Pacific': 0.150,
+        'Emerging Equities': 0.110
+    };
+
+    const labels = Object.keys(currentAllocation);
+    const currentData = labels.map(l => currentAllocation[l] * 100);
+    const proposedData = labels.map(l => proposedAllocation[l] * 100);
+    const data = Object.values(currentAllocation);
+    const maxValue = Math.max(...data);
+    const paddedMax = maxValue*1.2;
+    const paddedMaxRound = Math.ceil(paddedMax*10)*10;
 
     new Chart(ctx, {
         type: 'bar',
         data: {
-            labels: allocations.map(a => a.label),
-            datasets: [{
-                label: 'Value ($)',
-                data: allocations.map(a => a.value),
-                backgroundColor: '#6bc9a8',
-                borderRadius: 4
-            }]
+            labels,
+            datasets: [
+                {
+                    label: 'Current Portfolio',
+                    data: currentData,
+                    backgroundColor: 'rgba(107, 201, 168, 0.7)',
+                    borderRadius: 4
+                },
+                {
+                    label: 'Proposed Portfolio',
+                    data: proposedData,
+                    backgroundColor: 'rgba(90, 159, 184, 0.7)',
+                    borderRadius: 4
+                }
+            ]
         },
         options: {
             indexAxis: 'y',
             responsive: true,
-            maintainAspectRatio: false,
-            plugins: {
-                legend: {
-                    display: false
-                }
-            },
-            scales: {
-                x: {
-                    ticks: { 
-                        color: '#7a9fb0',
-                        callback: function(value) {
-                            return '$' + (value / 1000).toFixed(0) + 'K';
-                        }
-                    },
-                    grid: { color: 'rgba(255, 255, 255, 0.05)' }
-                },
-                y: {
-                    ticks: { color: '#7a9fb0' },
-                    grid: { display: false }
-                }
-            }
-        }
-    });
-}
-
-
-// ===== CREATE MATURITY EXPOSURE COLUMN CHART =====
-function createMaturityChart(holdings) {
-    const ctx = document.getElementById('maturityChart').getContext('2d');
-    
-    // Group holdings by maturity ranges
-    const maturityRanges = {
-        '0-2 years': 0,
-        '3-5 years': 0,
-        '6-8 years': 0,
-        '9+ years': 0
-    };
-
-    holdings.forEach(h => {
-        const value = h.market_value_usd;
-        if (h.years_to_maturity <= 2) {
-            maturityRanges['0-2 years'] += value;
-        } else if (h.years_to_maturity <= 5) {
-            maturityRanges['3-5 years'] += value;
-        } else if (h.years_to_maturity <= 8) {
-            maturityRanges['6-8 years'] += value;
-        } else {
-            maturityRanges['9+ years'] += value;
-        }
-    });
-
-    new Chart(ctx, {
-        type: 'bar',
-        data: {
-            labels: Object.keys(maturityRanges),
-            datasets: [{
-                label: 'Exposure ($)',
-                data: Object.values(maturityRanges),
-                backgroundColor: [
-                    '#6bc9a8',
-                    '#5a9fb8',
-                    '#8bb4c9',
-                    '#7a9fb0'
-                ],
-                borderRadius: 4
-            }]
-        },
-        options: {
-            responsive: true,
-            maintainAspectRatio: false,
-            plugins: {
-                legend: {
-                    display: false
-                }
-            },
-            scales: {
-                y: {
-                    ticks: { 
-                        color: '#7a9fb0',
-                        callback: function(value) {
-                            return '$'+ (value / 1000000).toFixed(1) + 'M';
-                        }
-                    },
-                    grid: { color: 'rgba(255, 255, 255, 0.05)' }
-                },
-                x: {
-                    ticks: { color: '#7a9fb0' },
-                    grid: { display: false }
-                }
-            }
-        }
-    });
-}
-
-// ===== UTILITY FUNCTIONS =====
-function formatCurrency(value) {
-    if (value >= 1000000) {
-        return '$' + (value / 1000000).toFixed(1) + 'M';
-    } else if (value >= 1000) {
-        return '$' + (value / 1000).toFixed(1) + 'K';
-    }
-    return '$' + value.toFixed(2);
-}
-
-// ===== CREATE CREDIT RATING vs INTEREST SCATTER PLOT =====
-function createCreditScatterChart(holdings, creditRatings) {
-    const ctx = document.getElementById('creditScatterChart').getContext('2d');
-
-    // Defineing label mapping
-    const ratingMap = {};
-    creditRatings.forEach(r => {
-        ratingMap[r.credit_rating_score] = r.sandp;
-    });
-
-    // Prepare scatter data
-    const scatterData = holdings.map(h => ({
-        x: h.credit_rating_score,
-        y: h.coupon,
-        label: h.issuer
-    }));
-
-    new Chart(ctx, {
-        type: 'scatter',
-        data: {
-            datasets: [{
-                label: 'Holdings',
-                data: scatterData,
-                backgroundColor: '#6bc9a8',
-                borderColor: '#5a9fb8',
-                borderWidth: 2,
-                pointRadius: 6,
-                pointHoverRadius: 8
-            }]
-        },
-        options: {
-            responsive: true,
             maintainAspectRatio: true,
             plugins: {
                 legend: {
-                    labels: { color: '#7a9fb0', font: { size: 12 } }
+                    labels: {
+                        color: '#7a9fb0',
+                        font: { size: 12 }
+                    }
                 },
                 tooltip: {
                     callbacks: {
-                        label: function(context) {
-                            const point = context.raw;
-                            const ratingText = ratingMap[point.x] || point.x;
-                            return `${point.label}: Rating ${point.x}, Interest ${point.y}%`;
-                        }
+                        label: (ctx) =>
+                            `${ctx.dataset.label}: ${ctx.raw.toFixed(1)}%`
                     }
                 }
             },
             scales: {
-                y: {
-                    title: {
-                        display: true,
-                        text: 'Interest Rate (%)',
-                        color: '#7a9fb0'
-                    },
-                    ticks: { color: '#7a9fb0' },
-                    grid: { color: 'rgba(255, 255, 255, 0.05)' }
-                },
                 x: {
-                    title: {
-                        display: true,
-                        text: 'Credit Rating',
-                        color: '#7a9fb0'
+                    ticks: {
+                        color: '#7a9fb0',
+                        callback: v => v + '%'
                     },
-                    ticks: { color: '#7a9fb0' , stepsize: 1, callback: function(value) { return ratingMap[value] || value; },
-                    grid: { color: 'rgba(255, 255, 255, 0.05)' },
-                    min: 7,
-                    max: 10
-                }
+                    grid: { color: 'rgba(255,255,255,0.05)' },
+                    min: 0,
+                    max: paddedMaxRound
+                },
+                y: {
+                    ticks: { color: '#7a9fb0' },
+                    grid: { display: false }
                 }
             }
         }
     });
 }
 
-// ===== TABLE SORTING FUNCTIONALITY =====
-let currentHoldings = [];
-let sortState = { column: null, direction: 'asc' };
+        // ===== CREATE YIELD BAR CHART =====
+        function createYieldChart() {
+        const ctx = document
+            .getElementById('yieldChart')
+            .getContext('2d');
 
-function initializeTableSorting() {
-    const headers = document.querySelectorAll('.holdings-table th.sortable');
-    
-    headers.forEach(header => {
-        header.addEventListener('click', function() {
-            const column = this.getAttribute('data-column');
-            sortTable(column);
-        });
+    const currentAllocation = {
+'< 0.5%': 0.121519948997527,
+'0.5-1.0%': 0.158816147462598,
+'1.0-2.0%': 0.129925265002807,
+'2.0-4.0%': 0.285347255062141,
+'4.0-6.0%': 0.149937831297754,
+'> 6.0%': 0.154453552177173
+    };
+
+    const proposedAllocation = {
+'< 0.5%': 0.141519948997527,
+'0.5-1.0%': 0.168816147462598,
+'1.0-2.0%': 0.129925265002807,
+'2.0-4.0%': 0.265347255062141,
+'4.0-6.0%': 0.139937831297754,
+'> 6.0%': 0.154453552177173
+    };
+
+    const labels = Object.keys(currentAllocation);
+    const currentData = labels.map(l => currentAllocation[l] * 100);
+    const proposedData = labels.map(l => proposedAllocation[l] * 100);
+    const data = Object.values(currentAllocation);
+    const maxValue = Math.max(...data);
+    const paddedMax = maxValue*1.2;
+    const paddedMaxRound = Math.ceil(paddedMax*10)*10;
+
+    new Chart(ctx, {
+        type: 'bar',
+        data: {
+            labels,
+            datasets: [
+                {
+                    label: 'Current Portfolio',
+                    data: currentData,
+                    backgroundColor: 'rgba(107, 201, 168, 0.7)',
+                    borderRadius: 4
+                },
+                {
+                    label: 'Proposed Portfolio',
+                    data: proposedData,
+                    backgroundColor: 'rgba(90, 159, 184, 0.7)',
+                    borderRadius: 4
+                }
+            ]
+        },
+        options: {
+            indexAxis: 'y',
+            responsive: true,
+            maintainAspectRatio: true,
+            plugins: {
+                legend: {
+                    labels: {
+                        color: '#7a9fb0',
+                        font: { size: 12 }
+                    }
+                },
+                tooltip: {
+                    callbacks: {
+                        label: (ctx) =>
+                            `${ctx.dataset.label}: ${ctx.raw.toFixed(1)}%`
+                    }
+                }
+            },
+            scales: {
+                x: {
+                    ticks: {
+                        color: '#7a9fb0',
+                        callback: v => v + '%'
+                    },
+                    grid: { color: 'rgba(255,255,255,0.05)' },
+                    min: 0,
+                    max: paddedMaxRound
+                },
+                y: {
+                    ticks: { color: '#7a9fb0' },
+                    grid: { display: false }
+                }
+            }
+        }
     });
 }
 
-function sortTable(column) {
-    // Toggle sort direction
-    if (sortState.column === column) {
-        sortState.direction = sortState.direction === 'asc' ? 'desc' : 'asc';
-    } else {
-        sortState.column = column;
-        sortState.direction = 'asc';
-    }
 
-    // Sort the holdings array
-    currentHoldings.sort((a, b) => {
-        let aVal, bVal;
+        // ===== CREATE CREDIT BAR CHART =====
+        function createCreditChart() {
+        const ctx = document
+            .getElementById('creditChart')
+            .getContext('2d');
 
-        switch(column) {
-            case 'security':
-                aVal = a.security;
-                bVal = b.security;
-                break;
-            case 'market_value':
-                aVal = a.market_value_usd;
-                bVal = b.market_value_usd;
-                break;
-            case 'notional':
-                aVal = a.notional;
-                bVal = b.notional;
-                break;
-            case 'notional_ccy':
-                aVal = a.notional_ccy;
-                bVal = b.notional_ccy;
-                break;
-            case 'price':
-                aVal = a.price;
-                bVal = b.price;
-                break;
-            case 'return':
-                aVal = a.price/a.cost_basis-1;
-                bVal = b.price/b.cost_basis-1;
-                break;
-        }
+    const currentAllocation = {
+'AAA': 0.199310145665101,
+'AA': 0.0685570872133905,
+'A': 0,
+'BBB': 0.0233482999434894,
+'BB': 0.122905864680399,
+'B': 0.00819938755328402,
+'CD': 0,
+'N/A': 0.577679214944336
+    };
 
-        if (typeof aVal === 'string') {
-            return sortState.direction === 'asc' 
-                ? aVal.localeCompare(bVal)
-                : bVal.localeCompare(aVal);
-        } else {
-            return sortState.direction === 'asc' 
-                ? aVal - bVal
-                : bVal - aVal;
+    const proposedAllocation = {
+'AAA': 0.079310145665101,
+'AA': 0.00855708721339049,
+'A': 0,
+'BBB': 0.0833482999434894,
+'BB': 0.242905864680399,
+'B': 0.00819938755328402,
+'CD': 0,
+'N/A': 0.577679214944336
+    };
+
+    const labels = Object.keys(currentAllocation);
+    const currentData = labels.map(l => currentAllocation[l] * 100);
+    const proposedData = labels.map(l => proposedAllocation[l] * 100);
+    const data = Object.values(currentAllocation);
+    const maxValue = Math.max(...data);
+    const paddedMax = maxValue*1.2;
+    const paddedMaxRound = Math.ceil(paddedMax*10)*10;
+
+    new Chart(ctx, {
+        type: 'bar',
+        data: {
+            labels,
+            datasets: [
+                {
+                    label: 'Current Portfolio',
+                    data: currentData,
+                    backgroundColor: 'rgba(107, 201, 168, 0.7)',
+                    borderRadius: 4
+                },
+                {
+                    label: 'Proposed Portfolio',
+                    data: proposedData,
+                    backgroundColor: 'rgba(90, 159, 184, 0.7)',
+                    borderRadius: 4
+                }
+            ]
+        },
+        options: {
+            indexAxis: 'y',
+            responsive: true,
+            maintainAspectRatio: true,
+            plugins: {
+                legend: {
+                    labels: {
+                        color: '#7a9fb0',
+                        font: { size: 12 }
+                    }
+                },
+                tooltip: {
+                    callbacks: {
+                        label: (ctx) =>
+                            `${ctx.dataset.label}: ${ctx.raw.toFixed(1)}%`
+                    }
+                }
+            },
+            scales: {
+                x: {
+                    ticks: {
+                        color: '#7a9fb0',
+                        callback: v => v + '%'
+                    },
+                    grid: { color: 'rgba(255,255,255,0.05)' },
+                    min: 0,
+                    max: paddedMaxRound
+                },
+                y: {
+                    ticks: { color: '#7a9fb0' },
+                    grid: { display: false }
+                }
+            }
         }
     });
-
-    // Update table headers
-    document.querySelectorAll('.holdings-table th.sortable').forEach(th => {
-        th.classList.remove('sorted-asc', 'sorted-desc');
-    });
-    const activeHeader = document.querySelector(`th[data-column="${column}"]`);
-    activeHeader.classList.add(sortState.direction === 'asc' ? 'sorted-asc' : 'sorted-desc');
-
-    // Re-render table
-    populateHoldingsTable(currentHoldings);
 }
 
 
+        // ===== CREATE LIQUIDITY BAR CHART =====
+        function createLiquidityChart() {
+        const ctx = document
+            .getElementById('liquidityChart')
+            .getContext('2d');
+
+    const currentAllocation = {
+'daily': 0.44568945861878,
+'2-7 days': 0,
+'1-4 weeks': 0.447795364702589,
+'1-6 months': 0.106515176678631,
+'> 6 months': 0
+    };
+
+    const proposedAllocation = {
+'daily': 0.44568945861878,
+'2-7 days': 0,
+'1-4 weeks': 0.447795364702589,
+'1-6 months': 0.106515176678631,
+'> 6 months': 0
+    };
+
+    const labels = Object.keys(currentAllocation);
+    const currentData = labels.map(l => currentAllocation[l] * 100);
+    const proposedData = labels.map(l => proposedAllocation[l] * 100);
+    const data = Object.values(currentAllocation);
+    const maxValue = Math.max(...data);
+    const paddedMax = maxValue*1.2;
+    const paddedMaxRound = Math.ceil(paddedMax*10)*10;
+
+    new Chart(ctx, {
+        type: 'bar',
+        data: {
+            labels,
+            datasets: [
+                {
+                    label: 'Current Portfolio',
+                    data: currentData,
+                    backgroundColor: 'rgba(107, 201, 168, 0.7)',
+                    borderRadius: 4
+                },
+                {
+                    label: 'Proposed Portfolio',
+                    data: proposedData,
+                    backgroundColor: 'rgba(90, 159, 184, 0.7)',
+                    borderRadius: 4
+                }
+            ]
+        },
+        options: {
+            indexAxis: 'y',
+            responsive: true,
+            maintainAspectRatio: true,
+            plugins: {
+                legend: {
+                    labels: {
+                        color: '#7a9fb0',
+                        font: { size: 12 }
+                    }
+                },
+                tooltip: {
+                    callbacks: {
+                        label: (ctx) =>
+                            `${ctx.dataset.label}: ${ctx.raw.toFixed(1)}%`
+                    }
+                }
+            },
+            scales: {
+                x: {
+                    ticks: {
+                        color: '#7a9fb0',
+                        callback: v => v + '%'
+                    },
+                    grid: { color: 'rgba(255,255,255,0.05)' },
+                    min: 0,
+                    max: paddedMaxRound
+                },
+                y: {
+                    ticks: { color: '#7a9fb0' },
+                    grid: { display: false }
+                }
+            }
+        }
+    });
+}
+
+        // ===== CREATE MATURITY BAR CHART =====
+        function createMaturityChart() {
+        const ctx = document
+            .getElementById('maturityChart')
+            .getContext('2d');
+
+    const currentAllocation = {
+'< 1 month': 0.0904746282022449,
+'1 month - 1 year': 0.0883023150079804,
+'1-3 years': 0.079779982370845,
+'3-10 years': 0.163763859474594,
+'N/A': 0.577679214944336
+    };
+
+    const proposedAllocation = {
+'< 1 month': 0.0304746282022449,
+'1 month - 1 year': 0.0283023150079804,
+'1-3 years': 0.139779982370845,
+'3-10 years': 0.223763859474594,
+'N/A': 0.577679214944336
+    };
+
+    const labels = Object.keys(currentAllocation);
+    const currentData = labels.map(l => currentAllocation[l] * 100);
+    const proposedData = labels.map(l => proposedAllocation[l] * 100);
+    const data = Object.values(currentAllocation);
+    const maxValue = Math.max(...data);
+    const paddedMax = maxValue*1.2;
+    const paddedMaxRound = Math.ceil(paddedMax*10)*10;
+
+    new Chart(ctx, {
+        type: 'bar',
+        data: {
+            labels,
+            datasets: [
+                {
+                    label: 'Current Portfolio',
+                    data: currentData,
+                    backgroundColor: 'rgba(107, 201, 168, 0.7)',
+                    borderRadius: 4
+                },
+                {
+                    label: 'Proposed Portfolio',
+                    data: proposedData,
+                    backgroundColor: 'rgba(90, 159, 184, 0.7)',
+                    borderRadius: 4
+                }
+            ]
+        },
+        options: {
+            indexAxis: 'y',
+            responsive: true,
+            maintainAspectRatio: true,
+            plugins: {
+                legend: {
+                    labels: {
+                        color: '#7a9fb0',
+                        font: { size: 12 }
+                    }
+                },
+                tooltip: {
+                    callbacks: {
+                        label: (ctx) =>
+                            `${ctx.dataset.label}: ${ctx.raw.toFixed(1)}%`
+                    }
+                }
+            },
+            scales: {
+                x: {
+                    ticks: {
+                        color: '#7a9fb0',
+                        callback: v => v + '%'
+                    },
+                    grid: { color: 'rgba(255,255,255,0.05)' },
+                    min: 0,
+                    max: paddedMaxRound
+                },
+                y: {
+                    ticks: { color: '#7a9fb0' },
+                    grid: { display: false }
+                }
+            }
+        }
+    });
+}
+
+
+        // ===== CREATE DURATION BAR CHART =====
+        function createDurationChart() {
+        const ctx = document
+            .getElementById('durationChart')
+            .getContext('2d');
+
+    const currentAllocation = {
+'< 1 year': 0.105611834080307,
+'1-3 years': 0.171544551197406,
+'3-5 years': 0.0689358191942571,
+'5-10 years': 0.0762285805836939,
+'N/A': 0.577679214944336
+    };
+
+    const proposedAllocation = {
+'< 1 year': 0.045611834080307,
+'1-3 years': 0.051544551197406,
+'3-5 years': 0.188935819194257,
+'5-10 years': 0.136228580583694,
+'N/A': 0.577679214944336
+    };
+
+    const labels = Object.keys(currentAllocation);
+    const currentData = labels.map(l => currentAllocation[l] * 100);
+    const proposedData = labels.map(l => proposedAllocation[l] * 100);
+    const data = Object.values(currentAllocation);
+    const maxValue = Math.max(...data);
+    const paddedMax = maxValue*1.2;
+    const paddedMaxRound = Math.ceil(paddedMax*10)*10;
+
+    new Chart(ctx, {
+        type: 'bar',
+        data: {
+            labels,
+            datasets: [
+                {
+                    label: 'Current Portfolio',
+                    data: currentData,
+                    backgroundColor: 'rgba(107, 201, 168, 0.7)',
+                    borderRadius: 4
+                },
+                {
+                    label: 'Proposed Portfolio',
+                    data: proposedData,
+                    backgroundColor: 'rgba(90, 159, 184, 0.7)',
+                    borderRadius: 4
+                }
+            ]
+        },
+        options: {
+            indexAxis: 'y',
+            responsive: true,
+            maintainAspectRatio: true,
+            plugins: {
+                legend: {
+                    labels: {
+                        color: '#7a9fb0',
+                        font: { size: 12 }
+                    }
+                },
+                tooltip: {
+                    callbacks: {
+                        label: (ctx) =>
+                            `${ctx.dataset.label}: ${ctx.raw.toFixed(1)}%`
+                    }
+                }
+            },
+            scales: {
+                x: {
+                    ticks: {
+                        color: '#7a9fb0',
+                        callback: v => v + '%'
+                    },
+                    grid: { color: 'rgba(255,255,255,0.05)' },
+                    min: 0,
+                    max: paddedMaxRound
+                },
+                y: {
+                    ticks: { color: '#7a9fb0' },
+                    grid: { display: false }
+                }
+            }
+        }
+    });
+}
+
+
+        // ===== CREATE CURRENCY BAR CHART =====
+        function createCurrencyChart() {
+        const ctx = document
+            .getElementById('currencyChart')
+            .getContext('2d');
+
+    const currentAllocation = {
+'USD': 0.677770808466233,
+'KRW': 0.0986929091499215,
+'EUR': 0.080529145767972,
+'TWD': 0.0291790175788201,
+'JPY': 0.0276849667964442,
+'CNY': 0.0270636755341375,
+'INR': 0.0240716795794893,
+'MXP': 0.0139856942094512,
+'BRL': 0.0116594971834924,
+'IDR': 0.00936260573403828
+    };
+
+    const proposedAllocation = {
+'USD': 0.557770808466233,
+'KRW': 0.0986929091499215,
+'EUR': 0.020529145767972,
+'TWD': 0.0591790175788201,
+'JPY': 0.0276849667964442,
+'CNY': 0.0870636755341375,
+'INR': 0.0360716795794893,
+'MXP': 0.0439856942094512,
+'BRL': 0.0596594971834924,
+'IDR': 0.00936260573403828
+    };
+
+    const labels = Object.keys(currentAllocation);
+    const currentData = labels.map(l => currentAllocation[l] * 100);
+    const proposedData = labels.map(l => proposedAllocation[l] * 100);
+    const data = Object.values(currentAllocation);
+    const maxValue = Math.max(...data);
+    const paddedMax = maxValue*1.2;
+    const paddedMaxRound = Math.ceil(paddedMax*10)*10;
+
+    new Chart(ctx, {
+        type: 'bar',
+        data: {
+            labels,
+            datasets: [
+                {
+                    label: 'Current Portfolio',
+                    data: currentData,
+                    backgroundColor: 'rgba(107, 201, 168, 0.7)',
+                    borderRadius: 4
+                },
+                {
+                    label: 'Proposed Portfolio',
+                    data: proposedData,
+                    backgroundColor: 'rgba(90, 159, 184, 0.7)',
+                    borderRadius: 4
+                }
+            ]
+        },
+        options: {
+            indexAxis: 'y',
+            responsive: true,
+            maintainAspectRatio: true,
+            plugins: {
+                legend: {
+                    labels: {
+                        color: '#7a9fb0',
+                        font: { size: 12 }
+                    }
+                },
+                tooltip: {
+                    callbacks: {
+                        label: (ctx) =>
+                            `${ctx.dataset.label}: ${ctx.raw.toFixed(1)}%`
+                    }
+                }
+            },
+            scales: {
+                x: {
+                    ticks: {
+                        color: '#7a9fb0',
+                        callback: v => v + '%'
+                    },
+                    grid: { color: 'rgba(255,255,255,0.05)' },
+                    min: 0,
+                    max: paddedMaxRound
+                },
+                y: {
+                    ticks: { color: '#7a9fb0' },
+                    grid: { display: false }
+                }
+            }
+        }
+    });
+}
+
+
+        // ===== CREATE CREDIT RATING vs INTEREST SCATTER PLOT =====
+        function createCreditScatterChart() {
+            const ctx = document.getElementById('creditScatterChart').getContext('2d');
+
+			const holdings_data = [
+{  ticker: 'US91087BAH24', yield: 8.45, yield_category: '> 6.0%', credit_rating: 'BBB', weight: 0.033116281993101 },
+{  ticker: 'US91282CJL48', yield: 4.15, yield_category: '4.0-6.0%', credit_rating: 'AAA', weight: 0.0421860421148365 },
+{  ticker: 'BSV', yield: 4.2, yield_category: '4.0-6.0%', credit_rating: 'AA', weight: 0.0845573720619014 },
+{  ticker: 'US345370CT12', yield: 6.75, yield_category: '> 6.0%', credit_rating: 'BB+', weight: 0.0219954895139662 },
+{  ticker: 'US1248EPBT30', yield: 7.85, yield_category: '> 6.0%', credit_rating: 'BB-', weight: 0.0253802030757698 },
+{  ticker: 'USP16030EV43', yield: 10.25, yield_category: '> 6.0%', credit_rating: 'BB-', weight: 0.0276081537922782 },
+{  ticker: 'JNK', yield: 7.3, yield_category: '> 6.0%', credit_rating: 'BB-', weight: 0.0494983902656477 },
+{  ticker: 'US88033GBB61', yield: 7.25, yield_category: '> 6.0%', credit_rating: 'B+', weight: 0.0194150698791756 },
+{  ticker: 'JPMXX', yield: 0.52, yield_category: '0.5-1.0%', credit_rating: 'AAA', weight: 0.107116002105272 },
+{  ticker: 'US455780CL28', yield: 7.15, yield_category: '> 6.0%', credit_rating: 'BBB', weight: 0.0221694173371179 },
+{  ticker: 'US084664CR17', yield: 4.25, yield_category: '4.0-6.0%', credit_rating: 'AA+', weight: 0.041933871622179 },
+{  ticker: 'US594918BW52', yield: 3.88, yield_category: '2.0-4.0%', credit_rating: 'AAA', weight: 0.0503288507752977 },
+{  ticker: 'US91282CJX01', yield: 4.05, yield_category: '4.0-6.0%', credit_rating: 'AAA', weight: 0.0633780182203917 },
+{  ticker: 'VMFXX', yield: 0.48, yield_category: '< 0.5%', credit_rating: 'AAA', weight: 0.107116002105272 },
+{  ticker: 'US478160CD18', yield: 3.95, yield_category: '2.0-4.0%', credit_rating: 'AAA', weight: 0.0383591198476857 },
+{  ticker: 'MINT', yield: 4.35, yield_category: '4.0-6.0%', credit_rating: 'AA+', weight: 0.0358429099720185 },
+{  ticker: 'EMB', yield: 6.95, yield_category: '> 6.0%', credit_rating: 'BB+', weight: 0.0591593110347247 },
+{  ticker: 'HYEM', yield: 8.95, yield_category: '> 6.0%', credit_rating: 'BB', weight: 0.0384460754756241 },
+{  ticker: 'SHY', yield: 4.1, yield_category: '4.0-6.0%', credit_rating: 'AAA', weight: 0.0634561409199751 },
+{  ticker: 'HYG', yield: 7.15, yield_category: '> 6.0%', credit_rating: 'BB', weight: 0.0689372778877661 },
+
+];
+
+
+const credit_ratings_lookup = [
+  'AAA',
+  'AA+',
+  'AA',
+  'AA-',
+  'A+',
+  'A',
+  'A-',
+  'BBB+',
+  'BBB',
+  'BBB-',
+  'BB+',
+  'BB',
+  'BB-',
+  'B+',
+  'B',
+  'B-'
+];
+
+            const ratingIndex = rating =>
+                credit_ratings_lookup.indexOf(rating);
+
+                        // Prepare scatter data
+                        const scatterData = holdings_data
+            .map(h => {
+                const xIndex = ratingIndex(h.credit_rating);
+                if (xIndex === -1) return null; // skip unknown ratings
+
+                return {
+                x: xIndex,
+                y: h.yield,
+                label: h.ticker,
+                rating: h.credit_rating
+                };
+            })
+            .filter(Boolean);
+
+
+            new Chart(ctx, {
+                type: 'scatter',
+                data: {
+                    datasets: [{
+                        label: 'Holdings',
+                        data: scatterData,
+                        backgroundColor: '#6bc9a8',
+                        borderColor: '#5a9fb8',
+                        borderWidth: 2,
+                        pointRadius: 6,
+                        pointHoverRadius: 8
+                    }]
+                },
+                options: {
+                    responsive: true,
+                    maintainAspectRatio: true,
+                    plugins: {
+                        legend: {
+                            labels: { color: '#7a9fb0', font: { size: 12 } }
+                        },
+                        tooltip: {
+                            callbacks: {
+                                label(context) {
+                                const p = context.raw;
+                                return `${p.label}: Rating ${p.rating}, Yield ${p.y}%`;
+                                }
+                            }
+                        }
+
+                    },
+                    scales: {
+                        y: {
+                            title: {
+                                display: true,
+                                text: 'Yield (%)',
+                                color: '#7a9fb0'
+                            },
+                            ticks: { color: '#7a9fb0' },
+                            grid: { color: 'rgba(255, 255, 255, 0.05)' }
+                        },
+                        x: {
+                            type: 'category',  // Change from 'linear' to 'category'
+                            labels: credit_ratings_lookup,  // Provide the labels array
+                            ticks: {
+                                color: '#7a9fb0'
+                            },
+                            title: {
+                                display: true,
+                                text: 'Credit Rating',
+                                color: '#7a9fb0'
+                            },
+                            grid: {
+                                color: 'rgba(255, 255, 255, 0.05)'
+                            }
+                        }
+                    }
+                }
+            });
+        }
+
+
+
+
+
+
+        // ===== TABLE SORTING FUNCTIONALITY =====
+        let currentHoldings = [];
+        let sortState = { column: null, direction: 'asc' };
+
+        function initializeTableSorting() {
+            const headers = document.querySelectorAll('.holdings-table th.sortable');
+            
+            headers.forEach(header => {
+                header.addEventListener('click', function() {
+                    const column = this.getAttribute('data-column');
+                    sortTable(column);
+                });
+            });
+        }
+
+        function sortTable(column) {
+            // Toggle sort direction
+            if (sortState.column === column) {
+                sortState.direction = sortState.direction === 'asc' ? 'desc' : 'asc';
+            } else {
+                sortState.column = column;
+                sortState.direction = 'asc';
+            }
+
+            // Sort the holdings array
+            currentHoldings.sort((a, b) => {
+                let aVal, bVal;
+
+                switch(column) {
+                    case 'security':
+                        aVal = a.security;
+                        bVal = b.security;
+                        break;
+                    case 'desc':
+                        aVal = a.desc;
+                        bVal = b.desc;
+                        break;
+                    case 'type':
+                        aVal = a.type;
+                        bVal = b.type;
+                        break;
+                    case 'yield':
+                        aVal = a.yield;
+                        bVal = b.yield;
+                        break;
+                    case 'mkt_val':
+                        aVal = a.mkt_val;
+                        bVal = b.mkt_val;
+                        break;
+                }
+
+                if (typeof aVal === 'string') {
+                    return sortState.direction === 'asc' 
+                        ? aVal.localeCompare(bVal)
+                        : bVal.localeCompare(aVal);
+                } else {
+                    return sortState.direction === 'asc' 
+                        ? aVal - bVal
+                        : bVal - aVal;
+                }
+            });
+
+            // Update table headers
+            document.querySelectorAll('.holdings-table th.sortable').forEach(th => {
+                th.classList.remove('sorted-asc', 'sorted-desc');
+            });
+            const activeHeader = document.querySelector(`th[data-column="${column}"]`);
+            activeHeader.classList.add(sortState.direction === 'asc' ? 'sorted-asc' : 'sorted-desc');
+
+            // Re-render table
+            populateHoldingsTable(currentHoldings);
+        }
+
+        // ===== UTILITY FUNCTIONS =====
+        function formatCurrency(value) {
+            if (value >= 1000000) {
+                return '$' + (value / 1000000).toFixed(1) + 'M';
+            } else if (value >= 1000) {
+                return '$' + (value / 1000).toFixed(1) + 'K';
+            }
+            return '$' + value.toFixed(2);
+        }
     </script>
-
 </body>
 </html>
